@@ -17,4 +17,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('list', [\App\Http\Controllers\DropzoneController::class, 'list'])->name('list');
+Route::get('add', [\App\Http\Controllers\DropzoneController::class, 'add'])->name('add');
 Route::post('upload', [\App\Http\Controllers\DropzoneController::class, 'upload'])->name('upload');
