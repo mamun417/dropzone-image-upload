@@ -18,6 +18,7 @@ class DropzoneController extends Controller
 
     public function upload(Request $request)
     {
+        info($request->all());
         dd($request->all());
 
         $request->validate([

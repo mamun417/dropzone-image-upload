@@ -14,6 +14,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+
+    <style>
+        .dropzone {
+            border: 2px dashed #0087F7;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .dropzone .dz-preview .dz-error-message {
+            top: 150px;
+        }
+    </style>
 </head>
 <body>
 
@@ -26,24 +38,27 @@
             <h2>PHP Dropzone File Upload on Button Click Example</h2>
 
             <form name="form" action="{{ route('upload') }}" method="post" enctype="multipart/form-data"
-                  class="dropzone" id="dropzone" style="border: none">
+                  class="dropzone" id="dropzone">
                 @csrf
 
                 <div class="form-group">
                     <label for="exampleInputEmail1">Name</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                    <input name="name" type="text" class="form-control" id="exampleInputEmail1"
+                           aria-describedby="emailHelp"
                            placeholder="Enter name">
                 </div>
 
                 <div class="form-group">
                     <label for="exampleInputEmail1">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                    <input name="email" type="email" class="form-control" id="exampleInputEmail1"
+                           aria-describedby="emailHelp"
                            placeholder="Enter email">
                 </div>
 
                 <div class="form-group">
                     <label for="exampleInputEmail1">Phone</label>
-                    <input type="number" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                    <input name="phone" type="number" class="form-control" id="exampleInputEmail1"
+                           aria-describedby="emailHelp"
                            placeholder="Enter phone number">
                 </div>
             </form>
@@ -66,6 +81,7 @@
         maxFilesize: 1,
         acceptedFiles: 'image/*',
         addRemoveLinks: true,
+        dictFileTooBig: 'fsdfdsf',
         init: function () {
             dropZone = this; // Makes sure that 'this' is understood inside the functions below.
 
@@ -81,9 +97,9 @@
             // });
 
             //send all the form data along with the files:
-            // this.on("sending", function(data, xhr, formData) {
-            //     formData.append("firstname", 'Abdullah Al Mamun');
-            // });
+            this.on("maxfilesexceeded", function (file) {
+                this.removeFile(file);
+            });
 
             // this.on("success", function (errorMessage) {
             //     console.log(errorMessage)
@@ -94,18 +110,27 @@
 
     $('#uploadFile').click(function () {
 
+        let dropzoneFiles = dropZone.files,
+            imageFiles = []
+
+        // filter only success image files
+        Object.keys(dropzoneFiles).filter(function (key) {
+            if (dropzoneFiles[key].status === 'queued') {
+                imageFiles.push(dropzoneFiles[key])
+            } else {
+                dropZone.removeFile(dropzoneFiles[key]);
+            }
+        })
+
         let form = document.getElementById('dropzone')
 
-        console.log(dropZone.files)
-
         let fd = new FormData(form);
-        fd.append('name', 'lll')
-        fd.append('files[]', dropZone.files[0])
-        fd.append('files[]', dropZone.files[1])
+        fd.append('files[]', imageFiles[0])
+        fd.append('files[]', imageFiles[1])
 
         axios.post('{{ route('upload') }}', fd)
             .then(res => {
-                console.log(res)
+                console.log(res.data)
             })
             .catch(error => {
                 $.each(error.response.data.errors, function (k, error) {
