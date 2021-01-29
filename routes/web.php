@@ -18,7 +18,7 @@ Route::get('/', function () {
     return redirect()->route('data.index');
 });
 
-Route::get('data/image-remove/{image-id}', [DataController::class, 'imageRemove'])
+Route::delete('data/image/remove/{id}', [DataController::class, 'imageRemove'])
     ->name('data.image-remove');
 
 Route::resource('data', DataController::class);

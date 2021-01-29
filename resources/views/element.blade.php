@@ -54,7 +54,7 @@
                             <img class="preview-image shadow mb-2 bg-white rounded" src="{{ $image->url }}" alt="">
                         </div>
                         <div class="text-center">
-                            <button onclick="imageRemove('{{ $image->id }}')" type="button"
+                            <button onclick="imageRemove(this, '{{ $image->id }}')" type="button"
                                     class="btn btn-sm btn-danger">
                                 Remove
                             </button>
@@ -155,10 +155,13 @@
                 })
         })
 
-        function imageRemove(image_id) {
-            axios.post('{{ route('data.image-remove', '') }}/' + image_id,)
+        function imageRemove(e, image_id) {
+            axios.delete('{{ route('data.image-remove', '') }}/' + image_id)
                 .then(function (res) {
-                    console.log(res.data)
+                    $(e).parents('.col-sm-2').remove()
+                })
+                .catch(error => {
+                    console.log(error.response)
                 })
         }
     </script>

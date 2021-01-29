@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Helpers\FileHandler;
 use App\Http\Requests\DataRequest;
 use App\Models\Data;
+use App\Models\Image;
 use DB;
 
 class DataController extends Controller
@@ -62,6 +63,9 @@ class DataController extends Controller
 
     public function imageRemove($image_id)
     {
-        return response()->json($image_id);
+        $image = Image::find($image_id);
+        $image->delete();
+
+        return response()->json($image);
     }
 }
