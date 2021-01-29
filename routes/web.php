@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DataController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('data.index');
 });
 
-Route::get('list', [\App\Http\Controllers\DropzoneController::class, 'list'])->name('list');
-Route::get('add', [\App\Http\Controllers\DropzoneController::class, 'add'])->name('add');
-Route::post('upload', [\App\Http\Controllers\DropzoneController::class, 'upload'])->name('upload');
+Route::get('data/image-remove/{image-id}', [DataController::class, 'imageRemove'])
+    ->name('data.image-remove');
+
+Route::resource('data', DataController::class);
