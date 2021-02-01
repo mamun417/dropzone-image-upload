@@ -55,7 +55,7 @@
                         </div>
                         <div class="text-center">
                             <button onclick="imageRemove(this, '{{ $image->id }}')" type="button"
-                                    class="btn btn-sm btn-danger">
+                                    class="btn btn-sm btn-danger" style="margin-bottom: 25px">
                                 Remove
                             </button>
                         </div>
@@ -67,7 +67,8 @@
 
 </form>
 
-<button type="submit" class="btn btn-primary" style="margin-top: 20px; margin-bottom: 100px" id="uploadFile">
+<button type="submit" class="btn btn-dark" style="margin-top: 20px; margin-bottom: 100px"
+        onclick="{{ isset($edit) ? 'updateData()' : 'storeData()' }}">
     {{ isset($edit) ? 'Update' : 'Submit' }}
 </button>
 
@@ -87,8 +88,8 @@
             maxFiles: maxFile,
             maxFilesize: 1,
             acceptedFiles: 'image/*',
-            addRemoveLinks: true,
-            dictFileTooBig: 'fsdfdsf',
+            addRemoveLinks: 'dictCancelUploadConfirmation',
+            // dictFileTooBig: 'fsdformDatasf',
             init: function () {
                 dropZone = this; // Makes sure that 'this' is understood inside the functions below.
 
@@ -116,8 +117,39 @@
             }
         }
 
-        $('#uploadFile').click(function () {
+        @if(isset($edit)) // check update form
+        function updateData() {
 
+            let formData = getFormFields();
+
+            formData.append("_method", "put");
+
+            axios.post('{{ route('data.update', $data->id) }}', formData)
+                .then(res => {
+                    location.href = res.data.redirect_url
+                })
+                .catch(error => {
+                    errorHandle(error)
+                })
+        }
+        @else
+        function storeData() {
+
+            let formData = getFormFields();
+
+            axios.post('{{ route('data.store') }}', formData)
+                .then(res => {
+                    location.href = res.data.redirect_url
+                    console.log(res.data)
+                })
+                .catch(error => {
+                    errorHandle(error)
+                })
+        }
+        @endisset
+
+
+        function getFormFields() {
             let dropzoneFiles = dropZone.files,
                 imageFiles = []
 
@@ -132,33 +164,32 @@
 
             let form = document.getElementById('dropzone')
 
-            let fd = new FormData(form);
+            let formData = new FormData(form);
 
             imageFiles.forEach(function (file, key) {
-                fd.append('files[]', file)
+                formData.append('files[]', file)
             })
 
-            axios.post('{{ route('data.store') }}', fd)
-                .then(res => {
-                    location.href = res.data.redirect_url
-                    console.log(res.data)
-                })
-                .catch(error => {
+            return formData;
+        }
 
-                    $('.error_msg').html('');
+        // form error handle
+        function errorHandle(error) {
+            $('.error_msg').html('');
 
-                    if (error.response.data.errors) {
-                        $.each(error.response.data.errors, function (input, error) {
-                            $(`input[name=${input}]`).next('.error_msg').html(error[0]);
-                        });
-                    }
-                })
-        })
+            if (error.response.data.errors) {
+                $.each(error.response.data.errors, function (input, error) {
+                    $(`input[name=${input}]`).next('.error_msg').html(error[0]);
+                });
+            }
+        }
 
+        // remove image file
         function imageRemove(e, image_id) {
             axios.delete('{{ route('data.image-remove', '') }}/' + image_id)
                 .then(function (res) {
                     $(e).parents('.col-sm-2').remove()
+                    console.log('Image remove successful.')
                 })
                 .catch(error => {
                     console.log(error.response)

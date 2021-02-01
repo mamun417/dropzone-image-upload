@@ -22,6 +22,11 @@
             background: white;
         }
 
+        .dropzone .dz-preview .dz-error-mark {
+            background: red;
+            border-radius: 50%;
+        }
+
         .dropzone .dz-preview .dz-error-message {
             top: 150px;
         }

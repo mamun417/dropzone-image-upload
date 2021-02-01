@@ -61,6 +61,41 @@ class DataController extends Controller
         return view('edit', compact('data'));
     }
 
+    public function update(DataRequest $request, Data $data): \Illuminate\Http\JsonResponse
+    {
+        DB::beginTransaction();
+
+        try {
+            $request_data = $request->validated();
+
+            $data->update($request_data);
+
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $image_path = FileHandler::upload($file, 'data', ['width' => 300, 'height' => 300]);
+
+                    $data->images()->create([
+                        'url' => $image_path
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'redirect_url' => route('data.edit', $data->id)
+            ]);
+
+        } catch (\Exception $exception) {
+            report($exception);
+            DB::rollBack();
+
+            return response()->json([
+                'error', $exception->getMessage()
+            ], 500);
+        }
+    }
+
     public function imageRemove($image_id)
     {
         $image = Image::find($image_id);

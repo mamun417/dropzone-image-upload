@@ -27,6 +27,11 @@
             top: 150px;
         }
 
+        .dropzone .dz-preview .dz-error-mark {
+            background: red;
+            border-radius: 50%;
+        }
+
         .preview-image {
             width: 100%;
             height: auto;
