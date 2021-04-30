@@ -86,7 +86,7 @@
             uploadMultiple: true,
             parallelUploads: maxFile,
             maxFiles: maxFile,
-            maxFilesize: 1,
+            maxFilesize: .1,
             acceptedFiles: 'image/*',
             addRemoveLinks: 'dictCancelUploadConfirmation',
             // dictFileTooBig: 'fsdformDatasf',
@@ -108,6 +108,10 @@
                 this.on("maxfilesexceeded", function (file) {
                     this.removeFile(file);
                     $('#imageError').html(`You can not upload more than ${maxFile} file.`);
+                });
+
+                this.on("error", function (file) {
+                    this.removeFile(file);
                 });
 
                 // this.on("success", function (errorMessage) {
