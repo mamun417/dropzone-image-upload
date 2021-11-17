@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CropImageController;
 use App\Http\Controllers\DataController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,6 @@ Route::delete('data/image/remove/{id}', [DataController::class, 'imageRemove'])
     ->name('data.image-remove');
 
 Route::resource('data', DataController::class);
+
+Route::get('crop-image-upload', [CropImageController::class, 'index'])->name('crop-image-upload');
+Route::post('crop-image-upload ', [CropImageController::class, 'uploadImage']);

@@ -15,7 +15,14 @@
 
 <div class="container" style="margin-top: 80px">
     <h3 class="text-center">Image upload with dropzone</h3>
-    <a href="{{ route('data.create') }}" class="btn btn-dark float-right" style="margin-bottom: 10px">Add New</a>
+    <a href="{{ route('data.create') }}" class="btn btn-dark float-right"
+       style="margin-bottom: 10px">
+        Add New
+    </a>
+
+    <a href="{{ route('crop-image-upload') }}" class="btn btn-dark float-right" style="margin-bottom: 10px;margin-right: 10px">
+        Add Crop Image
+    </a>
 
     <table class="table table-dark">
         <thead>
